@@ -52,3 +52,28 @@ same-sign rule across 16 cells is strict, and that is accepted in advance.
   to clear data it was never fitted to. A fail means nothing here is strong enough to trade
   on price data alone.
 - **No version of it will be tweaked and re-run.**
+
+## Result (run once, 2026-10-25): fail
+
+Score +0.28 against a bar of 1.00, and the IC sign differs across cells.
+
+| universe | 4w ratio | 13w ratio | 13w net per period |
+|---|---|---|---|
+| ETFs vs SPY | +0.65 | +0.77 | +0.95% |
+| Sectors vs SPY | +0.37 | +0.53 | +1.06% |
+| AI stocks vs QQQ | +0.20 | −0.10 | −1.31% |
+| Country ETFs vs EFA | +0.31 | −0.05 | −0.91% |
+| US style ETFs vs SPY | +0.42 | +0.34 | +0.29% |
+| S&P sub-industries vs SPY | +0.36 | +0.19 | −0.02% |
+| S&P sectors vs SPY | +0.30 | +0.38 | +0.79% |
+| AI layers vs QQQ | −0.22 | +0.05 | −0.79% |
+
+**Reading.**
+- **The sign mostly held:** 13 of 16 cells are positive. On the ETF and sector universes,
+  the direction and rough size of the pre-2023 effect continued into 2023-2026.
+- **No cell clears its noise threshold** over the short holdout.
+- **The AI stocks and AI layers show nothing,** which is the universe this project cares
+  about most.
+- **At 4 weeks the 1-week reversal leg trades too often** and loses to costs.
+
+This ends the price-data search, as stated above.
