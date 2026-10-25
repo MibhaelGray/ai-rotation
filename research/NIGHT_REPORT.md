@@ -81,3 +81,21 @@ of a search's best result is luck. Real progress needs either:
 All files are in `research/`: `prereg/*.md` for each plan and result, `search/*` for
 discovery and validation logs, and `log.jsonl`, `confirm_log.jsonl`, `holdout_log.jsonl`
 and `final_log.jsonl`.
+
+## Addendum: small and mid caps, and a survivorship lesson
+
+Run after the report above (`prereg/SMALLCAP.md`), on about 1,000 S&P 400 and 600 stocks
+that nothing had been scored on.
+
+- **The bear-market rebound first looked like the project's first real signal.** It scored
+  +3.32 on 1999-2022 and +1.37 on 2023+, net of costs, with every year right.
+- **Then the survivorship check removed it.** Rebuilt with point-in-time index membership,
+  meaning the 312 stocks removed since 2023 were put back, the 2023+ score fell to **+0.34**
+  and failed. Even that correction flatters the signal, because 430 removed names have no
+  Yahoo data.
+- **The lesson.** Any stock-level result on today's member lists is suspect, the AI baskets
+  included, since they were chosen in 2026 from survivors. The AI bear-rebound lead should be
+  treated as probably survivorship. ETFs have no such problem within a fund, which is why low
+  skewness on ETFs is the more trustworthy of the night's two findings.
+- **The other small/mid-cap tests failed.** Low skew + 1w losers was positive in all 8 cells
+  on 2023+ but scored +0.77 against a bar of 1.00.
