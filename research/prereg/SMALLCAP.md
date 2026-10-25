@@ -48,3 +48,25 @@ from their add date. Members added earlier have no date and count from their fir
   beaten-down or illiquid names, the bear rebound in particular, so a pass needs the 2023+
   check to mean much.
 - **Wikipedia's GICS labels are today's,** applied to the whole history.
+
+## Result (run once, 2026-10-25)
+
+| test | research score (bar 1.27) | 2023+ score (bar 1.00) | verdict |
+|---|---|---|---|
+| low skew | +0.29 | +0.78, positive in all 8 cells | fail |
+| low skew + 1w losers | +1.20, mixed signs | +0.77, positive in all 8 cells | fail (near miss) |
+| **bear rebound: skew + 1w reversal + illiquidity** | **+3.32** (cells +3.0 to +3.7) | **+1.37** (3 cells; S&P 400 13w had too few weeks) | **PASS on both** |
+| skew + 1w losers + falling RS-Momentum | +0.77 | +0.41 | fail |
+
+**The bear rebound on 2023+:**
+
+| universe | H | IC | ratio | net spread per period | years right |
+|---|---|---|---|---|---|
+| S&P 400 stocks | 4w | +0.064 | +1.80 | +1.28% | 100% |
+| S&P 600 stocks | 4w | +0.033 | +0.61 | +0.85% | 100% |
+| S&P 600 stocks | 13w | +0.063 | +1.68 | +3.58% | 100% |
+
+**Caveat before believing it.** Survivorship flatters this signal most of all: small caps that
+were removed from the index after collapsing are missing, and they are exactly the
+illiquid losers that did not rebound. That applies to 2023+ too. See the survivorship check
+below.
