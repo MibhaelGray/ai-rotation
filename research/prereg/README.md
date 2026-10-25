@@ -71,3 +71,42 @@ stronger across the whole universe. The pullback effect disappears entirely left
 so it belongs to names that are already strong. The one cell where the filter helped
 (lottery among Leading ETFs at 13 weeks, IC doubled) is a single cell out of twelve: worth
 noting, not acting on, and a formal test of it would be a new trial.
+
+---
+
+# Pre-registered: ATR and volume batch (2026-10-25)
+
+Committed before scoring. The files passed the scorecard's shape and look-ahead checks;
+no forward returns were computed. Each is scored once with
+`python research/evaluate.py research/prereg/<file>`, in the order below, and adds one trial
+to `log.jsonl`: the bar rises from about 1.58 to 1.60.
+
+## Why these
+
+None of these has been scored on returns before. ATR appeared only in the regime test,
+which asks a different question. The volume ideas already in the log combined volume with
+other legs (a volume-weighted pullback, capitulation day counts); these test volume and ATR
+on their own.
+
+## Tests
+
+| file | signal (higher = expected to outperform) | rationale |
+|---|---|---|
+| v1_atr_overextension.py | −(close − 50-day SMA) / 14-day ATR | moves stretched in their own volatility units mean-revert |
+| v2_abnormal_volume.py | log(20-day average volume / 250-day average) | the high-volume return premium |
+| v3_accumulation.py | log(volume on relative up days / volume on relative down days), 50 days | accumulation precedes outperformance |
+| v4_capitulation_atr.py | −(20-day relative log return) × (10-day ATR / 60-day ATR) | a volatile selloff marks seller exhaustion |
+
+## Rules
+
+- **Pass.** The standard scorecard rules at the bar in force when each is scored.
+- **Direction.** Each is expected to score positive. A negative score past the bar is
+  reported as a finding about the opposite effect, but it is not a pass.
+- **One shot.** A fail is final, and none is retuned. A pass goes to the holdout only on the
+  user's decision.
+
+## Known limits
+
+- **Volume units.** Volume is in shares of each listing, so V2 and V3 compare a name only
+  with its own history. That makes them unit-free.
+- **ETF volume** reflects creation and redemption activity as well as investor demand.
