@@ -110,3 +110,29 @@ on their own.
 - **Volume units.** Volume is in shares of each listing, so V2 and V3 compare a name only
   with its own history. That makes them unit-free.
 - **ETF volume** reflects creation and redemption activity as well as investor demand.
+
+## Results (scored once, 2026-10-25): all four fail
+
+| test | score | bar | ETFs 4w / 13w | Sectors 4w / 13w | AI stocks 4w / 13w |
+|---|---|---|---|---|---|
+| V1 ATR overextension | +0.05 | 1.59 | −0.22 / −0.32 | +0.62 / +0.35 | +0.60 / −0.70 |
+| V2 abnormal volume | −0.39 | 1.59 | −0.59 / −0.54 | −1.03 / −0.89 | +0.44 / +0.28 |
+| V3 accumulation | +0.32 | 1.60 | +0.38 / +0.28 | +0.25 / +0.10 | −0.23 / +1.13 |
+| V4 capitulation (ATR) | +0.38 | 1.60 | +0.03 / +0.03 | +0.63 / +0.58 | +1.18 / −0.16 |
+
+(The cells are ratios: IC t divided by the placebo t95.)
+
+**Reading.**
+- **No consistent effect.** None of the four has the same sign in every cell, and every
+  score is far from the bar.
+- **ATR overextension** says nothing about future returns.
+- **Abnormal volume** points opposite ways by universe: heavy volume comes before
+  *under*performance in ETFs and sectors (−0.4 to −1.0) and slightly before outperformance in
+  AI stocks. That fits ETF volume tracking flows that arrive late, but the effect is too weak
+  to call.
+- **Accumulation** clears noise in one cell only (AI stocks at 13 weeks, +1.13).
+- **Capitulation scaled by ATR** clears noise in one cell only (AI stocks at 4 weeks, +1.18).
+  It is near zero on ETFs.
+
+Single-cell hits like the last two are what 24 cells of noise produce now and then. They do
+not justify a retuned retry.
