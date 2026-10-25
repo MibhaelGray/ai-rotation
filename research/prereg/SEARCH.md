@@ -68,3 +68,19 @@ finished.
 - **The earlier work saw all of 1999-2022.** The 30 features include effects found in the
   earlier research, which used the whole research period, so validation is not fully blind to
   them. The holdout is the fully clean test.
+
+## Result (2026-10-25): 0 of 20 pass validation
+
+- **Discovery** screened all 13,575 candidates in 19 seconds. Every one of the 20 shortlisted
+  is built on negative skewness, mostly paired with the 1-week or 4-week reversal, low
+  abnormal volume, or both. No left- or right-of-centre variant made the list: sectors drop
+  below the 8-name minimum on one side of the chart, as expected.
+- **Validation (2011-2022).**
+  - Scores run from +0.17 to +0.77 against a bar of 1.54. Discovery t-stats of about 4
+    shrank to validation ratios of about 0.6, roughly t of 1.5.
+  - ETF and sector cells stay positive for every candidate, with ratios mostly 0.4-1.3.
+  - AI stocks at 13 weeks are negative for 14 of the 20.
+  - The best was skewness + RS-Momentum + abnormal volume at +0.77.
+- **Reading.** The low-skew effect holds its direction out of sample on ETFs, so it is
+  probably real, but it is about a quarter as strong as the 1999-2010 search made it look and
+  does not carry to the AI stocks at 13 weeks. Nothing reaches the holdout.
