@@ -43,3 +43,27 @@ Both are scored only in weeks when SPY closes below its 40-week average, exactly
   passing, so a fail is the more informative outcome.
 - **Shares are mostly US large caps,** which are more liquid than many of the foreign AI
   listings, so the illiquidity spread is narrower.
+
+## Result (run once, 2026-10-25): both PASS on the research period
+
+| test | 4w ratio (IC) | 13w ratio (IC) | score | net per H (4w / 13w) | years right |
+|---|---|---|---|---|---|
+| bear: skew + 1w reversal + illiquidity | +2.33 (+0.061) | +2.49 (+0.097) | **+2.41** | +1.08% / +3.50% | 81% / 86% |
+| bear: illiquidity alone | +1.44 (+0.046) | +1.53 (+0.089) | **+1.49** | +0.98% / +3.36% | 76% / 86% |
+
+Both clear the 2-test bar of 1.14. The survivorship caveat above applies with full force:
+the failed illiquid stocks of 2000-02 and 2008-09 are missing, which flatters exactly this
+signal.
+
+## The holdout can't be scored formally (decided before looking at any 2023+ outcome)
+
+Since 2023-01-01, SPY has closed below its 40-week average in only 16 weeks:
+2023-01, 2023-03, 2023-10, 2025-03 to 05 and 2026-03 to 04. QQQ has 17. The scorecard needs at
+least 16 weeks of IC for a 4-week cell and 34 for a 13-week cell, so a formal holdout would
+be empty or nearly so. As stated above, that is reported rather than forced.
+
+**Descriptive check, committed before running, not a test.** For the combined candidate,
+report the mean weekly rank IC and the share of positive weeks over the 2023+ bear weeks at 4
+and 13 weeks, on S&P 500 stocks and on AI stocks. The pass/fail verdict stays the research
+result above, with its caveat. This only says whether the recent bear episodes point the
+same way.
