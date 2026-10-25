@@ -46,3 +46,21 @@ only from the date it joined the S&P 500.
   toward firms that survived, more so in early years. The members' later success does not
   enter any signal directly.
 - **The sub-industries start thin:** about 43 in 2005, 70 by 2022.
+
+## Result (2026-10-25): 0 of 4 pass
+
+| signal | score | S&P sub-industries 4w / 13w | S&P sectors 4w / 13w | AI layers 4w / 13w |
+|---|---|---|---|---|
+| participation | −0.42 | −1.15 / −0.55 | −1.16 / −0.76 | +0.28 / +0.82 |
+| participation_change | −0.35 | −0.45 / −0.30 | −0.11 / −0.57 | −0.81 / +0.14 |
+| narrow_leadership | −0.13 | +0.22 / +0.27 | −0.51 / −0.33 | −0.14 / −0.30 |
+| net_new_highs | −0.30 | −0.65 / −0.55 | −0.57 / −0.50 | +0.22 / +0.23 |
+
+**Reading.**
+- **The classic breadth warning does not hold in S&P baskets; the reverse shows instead.**
+  When most of a basket's members are above their 50-day averages, or making new highs, the
+  basket tends to *under*perform over the next 4-13 weeks. At 4 weeks that sits at about the
+  95th percentile of noise. Breadth there behaves like a short-term overbought reading.
+- **Narrow leadership predicts nothing.**
+- **Only the AI layers show the classic direction:** good participation is followed by
+  outperformance at 13 weeks (+0.82), too weak to pass and opposite to the S&P baskets.
