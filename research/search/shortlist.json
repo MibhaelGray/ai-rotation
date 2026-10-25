@@ -1,0 +1,462 @@
+{
+ "time": "2026-10-25T02:35:34",
+ "signs": {
+  "lottery21": -1,
+  "crash21": -1,
+  "skew126": -1,
+  "vol63": -1,
+  "vol_ratio": -1,
+  "continuity126": 1,
+  "efficiency63": -1,
+  "beta63": -1,
+  "rsi14": -1,
+  "mom26s4": 1,
+  "mom12": -1,
+  "mom52s4": 1,
+  "rev4": -1,
+  "rev1": -1,
+  "high52": -1,
+  "trend40": 1,
+  "rs_ratio": -1,
+  "rs_mom": -1,
+  "rrg_dist": 1,
+  "rsr_z52": -1,
+  "tenure": -1,
+  "price_trend200": 1,
+  "atr_stretch": -1,
+  "range_exp": 1,
+  "close_loc10": -1,
+  "squeeze": -1,
+  "abn_volume": -1,
+  "accumulation": 1,
+  "capitulation": 1,
+  "amihud": 1
+ },
+ "n_candidates": 13575,
+ "shortlist": [
+  {
+   "id": "all:-skew126+-rev1",
+   "score": 4.329184249108486,
+   "min_t": 3.9838598902187283,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+-abn_volume",
+   "score": 4.148140284649093,
+   "min_t": 3.9059382560110425,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev4+-abn_volume",
+   "score": 3.974817309137186,
+   "min_t": 3.2366649981736253,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev4",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+-close_loc10",
+   "score": 3.900339532784014,
+   "min_t": 3.2609871229477685,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "close_loc10",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-atr_stretch+-abn_volume",
+   "score": 3.850330246467764,
+   "min_t": 3.0944385109420054,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "atr_stretch",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rsr_z52+-abn_volume",
+   "score": 3.830975438710852,
+   "min_t": 2.8147987886904664,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rsr_z52",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-efficiency63+-abn_volume",
+   "score": 3.7687740625893724,
+   "min_t": 2.8527594275697408,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "efficiency63",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+-squeeze",
+   "score": 3.7643672329598123,
+   "min_t": 2.7820921044224103,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "squeeze",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+-rs_mom",
+   "score": 3.738867167306445,
+   "min_t": 2.6623967114413625,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "rs_mom",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rs_mom+-abn_volume",
+   "score": 3.727558240233006,
+   "min_t": 3.0273269347585083,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rs_mom",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-vol_ratio+-rev1",
+   "score": 3.6915502274518746,
+   "min_t": 3.312278345023959,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "vol_ratio",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+-tenure",
+   "score": 3.6765377331175118,
+   "min_t": 3.498730795415751,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "tenure",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-close_loc10+-abn_volume",
+   "score": 3.6666450663217978,
+   "min_t": 2.94862086002267,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "close_loc10",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-abn_volume",
+   "score": 3.6457529961833983,
+   "min_t": 3.01050100519039,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-efficiency63+mom26s4",
+   "score": 3.610072153272636,
+   "min_t": 3.2817688213821743,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "efficiency63",
+      -1
+     ],
+     [
+      "mom26s4",
+      1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-squeeze+-abn_volume",
+   "score": 3.600148651918624,
+   "min_t": 3.260913515809805,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "squeeze",
+      -1
+     ],
+     [
+      "abn_volume",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev1+amihud",
+   "score": 3.5737391704186865,
+   "min_t": 3.2296104685888376,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev1",
+      -1
+     ],
+     [
+      "amihud",
+      1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rev4",
+   "score": 3.564021836560534,
+   "min_t": 2.427782714206865,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rev4",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rsi14",
+   "score": 3.5420173557268146,
+   "min_t": 2.6934015418394073,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rsi14",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  },
+  {
+   "id": "all:-skew126+-rsr_z52+-squeeze",
+   "score": 3.516675871524863,
+   "min_t": 2.995141937789715,
+   "spec": {
+    "features": [
+     [
+      "skew126",
+      -1
+     ],
+     [
+      "rsr_z52",
+      -1
+     ],
+     [
+      "squeeze",
+      -1
+     ]
+    ],
+    "subset": "all"
+   }
+  }
+ ]
+}

@@ -1,0 +1,524 @@
+<title>Regimes · Rotation</title>
+<style>
+@font-face{font-family:'Geist';src:url(fonts/geist.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Geist Mono';src:url(fonts/geist-mono.woff2) format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+:root{
+  color-scheme:dark;
+  --ground:#0d0e10; --panel:#131519; --raised:#1a1d22; --hover:#1f2329;
+  --line:#22262c; --line2:#2d3239;
+  --text:#e6e8eb; --muted:#8b919a; --faint:#838aa2;
+  --lead:#6cc28a; --imp:#7ea5e2; --weak:#e2b25c; --lag:#e2746b;
+  --ma1:#e0893e; --ma2:#56b6c2; --ma3:#b48ead; --ma4:#c9ccd1;
+  --sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --shadow:rgba(0,0,0,.5);
+}
+@media (prefers-color-scheme:light){
+  :root{
+    color-scheme:light;
+    --ground:#f6f7f9; --panel:#fff; --raised:#eef1f4; --hover:#e5e9ee;
+    --line:#e1e5ea; --line2:#c8cfd7;
+    --text:#14171a; --muted:#59616b; --faint:#64686d;
+    --lead:#297e4e; --imp:#3568ad; --weak:#8e691c; --lag:#bd4438;
+    --ma1:#c0651b; --ma2:#1d8696; --ma3:#8a5a86; --ma4:#59616b;
+    --shadow:rgba(16,20,26,.16);
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--ground);color:var(--text);margin:0}
+body{font-family:var(--sans);font-size:13px;line-height:1.45;padding-inline:16px;padding-block:18px 32px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--imp);outline-offset:2px;border-radius:4px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.app{max-width:1400px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.crumbs a,.crumbs button{background:none;border:0;padding:2px 4px;color:var(--muted);text-decoration:none}
+.crumbs a:hover,.crumbs button:hover{color:var(--text)}
+.crumbs .sep{color:var(--faint)}
+.crumbs .cur{color:var(--text);padding:2px 4px}
+h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em}
+.desc{color:var(--muted);margin-top:3px}
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.tool{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:2px}
+.seg button{background:none;border:0;border-radius:5px;padding:4px 9px;color:var(--muted);font-size:12px}
+.seg button[aria-pressed="true"]{background:var(--raised);color:var(--text);box-shadow:0 0 0 1px var(--line2)}
+select{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:12px}
+.tbtn{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:12px;color:var(--muted)}
+.tbtn:hover{color:var(--text);border-color:var(--line2)}
+.tbtn[aria-pressed="true"]{color:var(--text);background:var(--raised);border-color:var(--line2)}
+.find{position:relative}
+.find input{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:12px;width:190px}
+#qres{position:absolute;top:calc(100% + 4px);left:0;z-index:20;min-width:260px;max-height:320px;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:8px;box-shadow:0 8px 24px var(--shadow);padding:4px}
+#qres button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;background:none;border:0;border-radius:5px;padding:5px 8px}
+#qres button:hover,#qres button.on{background:var(--hover)}
+#qres small{color:var(--muted)}
+.loading{color:var(--muted);padding:40px 0;text-align:center}
+
+/* board */
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.stat .k{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}
+.stat .v{font-size:24px;font-weight:600;line-height:1}
+.stat .v small{font-size:12px;color:var(--muted);font-weight:400;margin-left:6px}
+.bar{height:6px;border-radius:3px;background:var(--raised);overflow:hidden}
+.bar i{display:block;height:100%}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.boardctl{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin:4px 0 10px;color:var(--muted);font-size:12px}
+.cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;min-width:0}
+.colhd{padding:9px 12px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);border-top:3px solid}
+.colhd b{font-size:13px}
+.colhd span{font-family:var(--mono);font-size:18px;font-weight:600}
+.colhd em{display:block;font-style:normal;color:var(--muted);font-size:11.5px}
+.cards{display:flex;flex-direction:column;gap:6px;padding:8px}
+.card{display:block;width:100%;text-align:left;background:var(--raised);border:1px solid var(--line);border-left:3px solid;border-radius:7px;padding:7px 9px}
+.card:hover{background:var(--hover);border-color:var(--line2)}
+.card .t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card .t b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .t .num{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.card .s{color:var(--muted);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;justify-content:space-between;gap:8px}
+.new{color:var(--text);font-size:10px;font-weight:600;letter-spacing:.04em;border:1px solid var(--line2);border-radius:4px;padding:0 4px;margin-left:4px}
+.strip{display:flex;gap:1px;margin-top:6px;height:6px}
+.strip i{flex:1;border-radius:1px;opacity:.9}
+.empty{color:var(--faint);font-size:12px;padding:10px 4px}
+@media (max-width:980px){.cols,.summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cols,.summary{grid-template-columns:minmax(0,1fr)}}
+
+/* chart */
+.chead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px 20px;margin-bottom:10px}
+.badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:8px}
+.chk{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:12px;cursor:pointer}
+.chk input{accent-color:var(--imp)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin:4px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:2px;display:inline-block;border-radius:1px}
+.wrap{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 0 0}
+canvas{display:block;width:100%;touch-action:none;cursor:crosshair}
+#tip{position:absolute;pointer-events:none;z-index:5;background:var(--panel);border:1px solid var(--line2);border-radius:8px;box-shadow:0 8px 24px var(--shadow);padding:7px 9px;font-size:12px;min-width:170px}
+#tip .r{display:flex;justify-content:space-between;gap:14px}
+#tip .r span:first-child{color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.fact .k{color:var(--muted);font-size:11.5px}
+.fact .v{font-size:14px;font-weight:500;margin-top:2px}
+.note{color:var(--muted);font-size:12px;margin-top:12px;max-width:900px}
+.hist{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.hist h3{margin:0 0 6px;font-size:12.5px;font-weight:600}
+.hist table{border-collapse:collapse;width:100%;font-size:12px}
+.hist td,.hist th{padding:3px 8px 3px 0;text-align:left;white-space:nowrap}
+.hist th{color:var(--muted);font-weight:500}
+</style>
+<script id="meta" type="application/json">__META__</script>
+<div class="app">
+  <header>
+    <div>
+      <div class="crumbs"><a href="index.html">Rotation</a><span class="sep">/</span><button type="button" id="toboard">Regimes</button><span class="sep" id="csep" hidden>/</span><span class="cur" id="ccur" hidden></span></div>
+      <h1 id="title">Regime board</h1>
+      <div class="desc" id="desc"></div>
+    </div>
+    <div class="tools">
+      <div class="tool find"><input id="q" type="search" placeholder="Find ticker, ETF or layer" autocomplete="off" aria-label="Find a ticker, ETF or layer"><div id="qres" hidden role="listbox"></div></div>
+      <div class="tool"><span>Show</span><div class="seg" id="set"><button type="button" data-v="layers">AI layers</button><button type="button" data-v="stocks">AI stocks</button><button type="button" data-v="etfs">ETFs</button></div></div>
+      <div class="tool"><span>Regime on</span><div class="seg" id="frame"><button type="button" data-v="W" title="Weekly RRG against a 10-week average, as the rotation page's default">Weekly</button><button type="button" data-v="D" title="Daily RRG against a 21-session average">Daily</button></div></div>
+      <div class="tool"><label for="bench">vs</label><select id="bench"></select></div>
+    </div>
+  </header>
+  <div id="loading" class="loading">Loading prices…</div>
+
+  <section id="board" hidden>
+    <div class="summary" id="summary"></div>
+    <div class="boardctl"><span id="bdesc"></span>
+      <span class="tool"><label for="sort">Sort</label><select id="sort"><option value="str">Strength (RS-Ratio)</option><option value="new">Newest arrivals first</option><option value="old">Longest in quadrant</option><option value="name">Name</option></select></span></div>
+    <div class="cols" id="cols"></div>
+    <p class="note">Each card is coloured by the quadrant it is in now. The strip under it is its last 26 weeks, oldest on the left, so a card that just turned shows the colour change at its right end. The number on the right is how long it has been in this quadrant. Click a card for its daily candles.</p>
+  </section>
+
+  <section id="chartv" hidden>
+    <div class="chead">
+      <div><div id="cbadge"></div></div>
+      <div class="ctl" style="margin:0">
+        <button type="button" class="tbtn" id="prev" title="Previous on the board (←)">‹ Prev</button>
+        <button type="button" class="tbtn" id="next" title="Next on the board (→)">Next ›</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <div class="seg" id="range"><button type="button" data-v="63">3M</button><button type="button" data-v="126">6M</button><button type="button" data-v="252">1Y</button><button type="button" data-v="504">2Y</button><button type="button" data-v="0">All</button></div>
+      <button type="button" class="tbtn" id="zin" title="Zoom in (+)">Zoom in</button>
+      <button type="button" class="tbtn" id="zout" title="Zoom out (−)">Zoom out</button>
+      <button type="button" class="tbtn" id="reset" title="Back to the latest year (0)">Reset</button>
+      <label class="chk"><input type="checkbox" id="oq" checked> Regime colours</label>
+      <label class="chk"><input type="checkbox" id="oma" checked> Moving averages</label>
+      <label class="chk"><input type="checkbox" id="ovol" checked> Volume</label>
+      <label class="chk"><input type="checkbox" id="olog"> Log scale</label>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="wrap" id="wrap"><canvas id="cv" aria-label="Daily candles coloured by RRG quadrant"></canvas><div id="tip" hidden></div></div>
+    <div class="facts" id="facts"></div>
+    <div class="hist" id="hist"></div>
+    <p class="note" id="cnote"></p>
+  </section>
+</div>
+<script>
+const M=JSON.parse(document.getElementById('meta').textContent);
+const $=s=>document.querySelector(s);
+const Q={L:{n:'Leading',h:'strong and rising',v:'--lead'},W:{n:'Weakening',h:'strong, fading',v:'--weak'},G:{n:'Lagging',h:'weak and falling',v:'--lag'},I:{n:'Improving',h:'weak, turning up',v:'--imp'}};
+const CYCLE=['I','L','W','G'];   // the clockwise rotation, from the turn up to the decline
+const quad=(x,y)=>x>=100?(y>=100?'L':'W'):(y>=100?'I':'G');
+const TIERS={semis:'Core Semis',compute:'AI Compute',network:'Networking & Optics',power:'Power & Buildout',platforms:'Platforms & Software',physical:'Physical AI',bio:'Bio AI'};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(v,d=2)=>v==null||!isFinite(v)?'–':v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtV=v=>!v?'–':v>=1e9?(v/1e9).toFixed(2)+'B':v>=1e6?(v/1e6).toFixed(2)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':String(v);
+const fmtD=s=>{const d=new Date(s+'T12:00:00Z');return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});};
+
+let D,N,PX,OH;
+const st={set:'layers',frame:'W',bench:'auto',sort:'str',id:null,q:true,ma:true,vol:true,log:false};
+try{Object.assign(st,JSON.parse(localStorage.getItem('regimes-v1')||'{}'),{id:null});}catch(e){}
+const save=()=>{try{localStorage.setItem('regimes-v1',JSON.stringify({set:st.set,frame:st.frame,bench:st.bench,sort:st.sort,q:st.q,ma:st.ma,vol:st.vol,log:st.log}));}catch(e){}};
+
+// ------------------------------------------------------------------ items
+function tickers(n){if(Array.isArray(n))return n;if(n&&n._tickers)return n._tickers;return n?Object.values(n).flatMap(tickers):[];}
+const ITEMS={},SETS={layers:[],stocks:[],etfs:[]};
+function buildItems(){
+  for(const [g,layers] of Object.entries(M.groups)){
+    for(const [layer,node] of Object.entries(layers)){
+      const mem=[...new Set(tickers(node))].filter(t=>PX[t]);
+      if(mem.length<2)continue;
+      const id='layer:'+layer;
+      ITEMS[id]={id,kind:'layer',label:layer,sub:`${TIERS[g]||g} · ${mem.length} stocks`,members:mem,peer:M.peers[layer]||(g==='semis'?'SOXX':'QQQ')};
+      SETS.layers.push(id);
+      for(const t of mem){
+        if(ITEMS[t])continue;
+        ITEMS[t]={id:t,kind:'stock',label:t,name:M.names[t]||'',sub:`${layer}`,tier:TIERS[g]||g,peer:M.peers[layer]||(g==='semis'?'SOXX':'QQQ')};
+        SETS.stocks.push(t);
+      }
+    }
+  }
+  const IND=M.industry_etfs||{};
+  const etfs=[...Object.keys(M.sectors),...Object.keys(IND),...M.benchmarks];
+  for(const t of etfs){if(!PX[t]||ITEMS[t])continue;
+    ITEMS[t]={id:t,kind:'etf',label:t,name:M.sectors[t]||IND[t]||M.names[t]||'',sub:M.sectors[t]?'S&P 500 sector':IND[t]?'Industry ETF':'Benchmark ETF',peer:'SPY'};SETS.etfs.push(t);}
+}
+const autoBench=it=>it.kind==='etf'?(it.id==='SPY'?'QQQ':'SPY'):'QQQ';
+const benchOf=it=>st.bench==='auto'?autoBench(it):st.bench==='peer'?it.peer:st.bench;
+
+// ------------------------------------------------------------------ series
+// Candles for a ticker: closes from the rotation page's data, open/high/low from basis-point
+// offsets to the close. A layer is the page's basket: equal-weight daily returns of the members
+// that traded, chained; its range is the members' mean high/close and low/close on the index.
+const SER={};
+function series(id){
+  if(SER[id])return SER[id];
+  const it=ITEMS[id]||{kind:'stock'};
+  const c=new Array(N).fill(null),o=new Array(N).fill(null),h=new Array(N).fill(null),l=new Array(N).fill(null),v=new Array(N).fill(0);
+  if(it.kind==='layer'){
+    let idx=null;
+    for(let i=0;i<N;i++){
+      let rs=0,n=0,ro=0,rh=0,rl=0,k=0,vol=0;
+      for(const t of it.members){
+        const p=PX[t],a=OH[t];
+        if(p[i]==null)continue;
+        if(i>0&&p[i-1]!=null){rs+=p[i]/p[i-1]-1;n++;}
+        if(a){ro+=a[0][i];rh+=a[1][i];rl+=a[2][i];vol+=a[3][i]*p[i];}k++;
+      }
+      if(idx==null){if(k>=2)idx=100;else continue;}
+      else if(n)idx*=1+rs/n;
+      if(!k){continue;}
+      c[i]=idx;o[i]=idx*(1+ro/k/1e4);h[i]=idx*(1+rh/k/1e4);l[i]=idx*(1+rl/k/1e4);v[i]=vol;
+    }
+  }else{
+    const p=PX[id],a=OH[id];
+    for(let i=0;i<N;i++){if(p[i]==null)continue;c[i]=p[i];
+      if(a){o[i]=p[i]*(1+a[0][i]/1e4);h[i]=p[i]*(1+a[1][i]/1e4);l[i]=p[i]*(1+a[2][i]/1e4);v[i]=a[3][i];}else{o[i]=h[i]=l[i]=p[i];}}
+  }
+  for(let i=0;i<N;i++)if(c[i]!=null){h[i]=Math.max(h[i],o[i],c[i]);l[i]=Math.min(l[i],o[i],c[i]);}
+  return SER[id]={c,o,h,l,v};
+}
+
+// ------------------------------------------------------------------ RRG
+// The rotation page's formulas: RS = price / benchmark; RS-Ratio = 100 x EMA(3) of RS over its
+// SMA (10 weeks weekly, 21 sessions daily); RS-Momentum = EMA(3) of the 1-bar change in RS-Ratio.
+function ema(a,p){const k=2/(p+1);let e=null;return a.map(v=>v==null?(e=null,null):(e=e==null?v:e+k*(v-e)));}
+function sma(a,n){return a.map((v,i)=>{if(v==null||i<n-1)return null;let s=0;for(let j=i-n+1;j<=i;j++){if(a[j]==null)return null;s+=a[j];}return s/n;});}
+function rrg(px,bx,idx,n){
+  const rs=idx.map(i=>px[i]!=null&&bx[i]!=null?100*px[i]/bx[i]:null);
+  const sm=ema(rs,3),base=sma(sm,n);
+  const rsr=sm.map((v,i)=>v!=null&&base[i]!=null?100*v/base[i]:null);
+  const roc=rsr.map((v,i)=>i>=1&&v!=null&&rsr[i-1]!=null?100*v/rsr[i-1]:null);
+  return {sm,rsr,rsm:ema(roc,3)};
+}
+let WEEK=null;   // last session of each week; the final, possibly unfinished week included
+function weeks(){if(WEEK)return WEEK;const r=[];for(let i=0;i<N;i++){const d=new Date(D[i]+'T12:00:00Z'),nx=i+1<N?new Date(D[i+1]+'T12:00:00Z'):null;
+  if(!nx||nx.getUTCDay()<d.getUTCDay()||(nx-d)>6*864e5)r.push(i);}return WEEK=r;}
+// Per-session regime as the page would have shown it that day: on the weekly frame a session
+// inside a week is the week's provisional bar (that day's close standing in for Friday's),
+// so nothing after the session is used.
+const RC={};
+function regime(id,bench,frame){
+  const k=id+'|'+bench+'|'+frame;if(RC[k])return RC[k];
+  const px=series(id).c,bx=PX[bench];
+  const X=new Array(N).fill(null),Y=new Array(N).fill(null),q=new Array(N).fill(null);
+  let wk=null;
+  if(!bx||id===bench){return RC[k]={X,Y,q,wk:{q:[],idx:[]}};}
+  if(frame==='D'){
+    const r=rrg(px,bx,[...Array(N).keys()],21);
+    for(let i=0;i<N;i++){X[i]=r.rsr[i];Y[i]=r.rsm[i];}
+  }else{
+    const W=weeks(),r=rrg(px,bx,W,10),a=.5;
+    let w=0;
+    for(let i=0;i<N;i++){
+      while(W[w]<i)w++;
+      if(W[w]===i){X[i]=r.rsr[w];Y[i]=r.rsm[w];continue;}
+      if(w<10||px[i]==null||bx[i]==null)continue;
+      const pm=r.sm[w-1],pr=r.rsr[w-1],pmo=r.rsm[w-1];
+      if(pm==null||pr==null||pmo==null)continue;
+      const sm=pm+a*(100*px[i]/bx[i]-pm);
+      let s=sm,ok=true;for(let j=w-9;j<w;j++){if(r.sm[j]==null){ok=false;break;}s+=r.sm[j];}
+      if(!ok)continue;
+      const x=100*sm/(s/10);X[i]=x;Y[i]=pmo+a*(100*x/pr-pmo);
+    }
+    wk={idx:W,q:W.map((_,j)=>r.rsr[j]!=null&&r.rsm[j]!=null?quad(r.rsr[j],r.rsm[j]):null)};
+  }
+  for(let i=0;i<N;i++)if(X[i]!=null&&Y[i]!=null)q[i]=quad(X[i],Y[i]);
+  if(!wk)wk={idx:[...Array(N).keys()],q};
+  return RC[k]={X,Y,q,wk};
+}
+// Bars spent in the current quadrant, on the frame's own bars (weeks or sessions).
+function tenure(qs){let e=qs.length-1;while(e>=0&&qs[e]==null)e--;if(e<0)return {q:null,n:0,end:-1};
+  let s=e;while(s>0&&qs[s-1]===qs[e])s--;return {q:qs[e],n:e-s+1,end:e,prev:s>0?qs[s-1]:null,start:s};}
+function summary(id){
+  const it=ITEMS[id],b=benchOf(it),r=regime(id,b,st.frame),t=tenure(r.wk.q);
+  let last=N-1;while(last>0&&r.X[last]==null)last--;
+  const c=series(id).c,bx=PX[b];
+  let i0=st.frame==='W'?r.wk.idx[Math.max(0,r.wk.idx.length-5)]:Math.max(0,N-21);
+  const rel=c[last]!=null&&c[i0]!=null&&bx[last]&&bx[i0]?((c[last]/bx[last])/(c[i0]/bx[i0])-1)*100:null;
+  return {it,b,t,x:r.X[last],y:r.Y[last],rel,strip:r.wk.q.slice(-26)};
+}
+
+// ------------------------------------------------------------------ board
+function board(){
+  const ids=SETS[st.set],S=ids.map(summary).filter(s=>s.t.q);
+  const unit=st.frame==='W'?'w':'d';
+  const by={};for(const k of CYCLE)by[k]=[];
+  for(const s of S)by[s.t.q].push(s);
+  const sorter={str:(a,b)=>b.x-a.x,new:(a,b)=>a.t.n-b.t.n||b.x-a.x,old:(a,b)=>b.t.n-a.t.n,name:(a,b)=>a.it.label.localeCompare(b.it.label)}[st.sort];
+  const tot=S.length||1;
+  $('#summary').innerHTML=CYCLE.map(k=>{const n=by[k].length,nw=by[k].filter(s=>s.t.n<=1).length;
+    return `<div class="stat"><div class="k"><span class="dot" style="background:var(${Q[k].v})"></span>${Q[k].n} <span>· ${Q[k].h}</span></div>
+      <div class="v num">${n}<small>${Math.round(n/tot*100)}%${nw?` · ${nw} new`:''}</small></div><div class="bar"><i style="width:${n/tot*100}%;background:var(${Q[k].v})"></i></div></div>`;}).join('');
+  const benches=[...new Set(S.map(s=>s.b))];
+  $('#bdesc').textContent=`${S.length} ${st.set==='layers'?'AI layers':st.set==='stocks'?'AI stocks':'ETFs'} against ${benches.join(', ')} · ${st.frame==='W'?'weekly':'daily'} RRG · as of ${fmtD(D[N-1])}`;
+  $('#cols').innerHTML=CYCLE.map(k=>`<div class="col"><div class="colhd" style="border-top-color:var(${Q[k].v})"><div><b>${Q[k].n}</b><em>${Q[k].h}</em></div><span class="num">${by[k].length}</span></div><div class="cards">`+
+    (by[k].sort(sorter).map(s=>`<button type="button" class="card" data-id="${esc(s.it.id)}" style="border-left-color:var(${Q[k].v})" title="${esc(s.it.name||s.it.sub)}">
+      <div class="t"><b>${esc(s.it.label)}${s.t.n<=1?'<span class="new">NEW</span>':''}</b><span class="num">${s.t.n}${unit}${s.t.prev?` · from ${Q[s.t.prev].n.slice(0,3)}`:''}</span></div>
+      <div class="s"><span>${esc(s.it.kind==='layer'?s.it.sub:(s.it.name||s.it.sub))}</span><span class="num">${s.rel==null?'':(s.rel>=0?'+':'')+s.rel.toFixed(1)+'%'}</span></div>
+      <div class="strip">${s.strip.map(q=>`<i style="background:${q?`var(${Q[q].v})`:'var(--line)'}"></i>`).join('')}</div></button>`).join('')||'<div class="empty">None</div>')+'</div></div>').join('');
+  ORDER=CYCLE.flatMap(k=>by[k].sort(sorter).map(s=>s.it.id));
+}
+let ORDER=[];
+
+// ------------------------------------------------------------------ chart
+const cv=$('#cv'),ctx=cv.getContext('2d');
+const V={a:0,b:0};    // visible session range [a,b)
+let HOVER=null,DRAG=null,LAY=null;
+function ma(c,n,ex){const out=new Array(N).fill(null);
+  if(ex){const k=2/(n+1);let e=null;for(let i=0;i<N;i++){if(c[i]==null){e=null;continue;}e=e==null?c[i]:e+k*(c[i]-e);out[i]=e;}return out;}
+  let s=0,q=0;for(let i=0;i<N;i++){if(c[i]==null){s=0;q=0;continue;}s+=c[i];q++;if(q>n){s-=c[i-n];q--;}if(q===n)out[i]=s/n;}return out;}
+const MAS=[{n:10,ex:true,l:'EMA 10',v:'--ma1'},{n:20,l:'SMA 20',v:'--ma2'},{n:50,l:'SMA 50',v:'--ma3'},{n:200,l:'SMA 200',v:'--ma4'}];
+function setRange(n){const s=series(st.id).c;let first=0;while(first<N&&s[first]==null)first++;
+  V.b=N+2;V.a=n?Math.max(first-2,N-n):first-2;draw();}
+function draw(){
+  if(!st.id)return;
+  const dpr=window.devicePixelRatio||1,W=cv.parentElement.clientWidth,Hh=Math.max(420,Math.min(640,Math.round(W*.52)));
+  cv.style.height=Hh+'px';cv.width=Math.round(W*dpr);cv.height=Math.round(Hh*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
+  const s=series(st.id),it=ITEMS[st.id],b=benchOf(it),r=regime(st.id,b,st.frame);
+  const padR=62,padL=10,top=6,low=Math.round(Hh*.2),axis=22,rib=7,gap=10;
+  const mainH=Hh-top-low-axis-rib-gap*2,ribY=top+mainH+4,lowY=ribY+rib+gap,plotW=W-padL-padR;
+  LAY={padL,plotW,top,mainH,ribY,lowY,low,W,Hh};
+  const span=V.b-V.a,bw=plotW/span,xOf=i=>padL+(i-V.a+.5)*bw;
+  const i0=Math.max(0,Math.floor(V.a)),i1=Math.min(N-1,Math.ceil(V.b));
+  const mas=st.ma?MAS.map(m=>({...m,a:ma(s.c,m.n,m.ex)})):[];
+  let lo=Infinity,hi=-Infinity,vmax=0;
+  for(let i=i0;i<=i1;i++){if(s.c[i]==null)continue;lo=Math.min(lo,s.l[i]);hi=Math.max(hi,s.h[i]);vmax=Math.max(vmax,s.v[i]);
+    for(const m of mas)if(m.a[i]!=null&&m.n<=50){lo=Math.min(lo,m.a[i]);hi=Math.max(hi,m.a[i]);}}
+  ctx.clearRect(0,0,W,Hh);
+  ctx.font='11px '+css('--mono');
+  const col=k=>css(Q[k].v),line=css('--line'),muted=css('--muted'),text=css('--text');
+  if(!isFinite(lo)){ctx.fillStyle=muted;ctx.fillText('No prices in this window',padL+10,top+20);return;}
+  const lg=st.log&&lo>0,T=v=>lg?Math.log(v):v;
+  const pad=(T(hi)-T(lo))*.06||1,ylo=T(lo)-pad,yhi=T(hi)+pad;
+  const yOf=v=>top+(yhi-T(v))/(yhi-ylo)*mainH;
+  LAY.yOf=yOf;LAY.xOf=xOf;LAY.bw=bw;
+  // grid + price axis
+  ctx.strokeStyle=line;ctx.fillStyle=muted;ctx.lineWidth=1;ctx.textAlign='left';ctx.textBaseline='middle';
+  const nt=5;for(let k=0;k<=nt;k++){const tv=ylo+(yhi-ylo)*k/nt,v=lg?Math.exp(tv):tv,y=yOf(v);
+    ctx.beginPath();ctx.moveTo(padL,Math.round(y)+.5);ctx.lineTo(padL+plotW,Math.round(y)+.5);ctx.stroke();
+    ctx.fillText(v>=1000?v.toFixed(0):v>=100?v.toFixed(1):v.toFixed(2),padL+plotW+8,y);}
+  ctx.save();ctx.beginPath();ctx.rect(padL,0,plotW,Hh);ctx.clip();
+  // volume
+  if(st.vol&&vmax>0){const vh=mainH*.18;
+    for(let i=i0;i<=i1;i++){if(s.c[i]==null||!s.v[i])continue;const h=s.v[i]/vmax*vh;
+      ctx.globalAlpha=.28;ctx.fillStyle=st.q&&r.q[i]?col(r.q[i]):muted;ctx.fillRect(xOf(i)-bw*.4,top+mainH-h,Math.max(1,bw*.8),h);}
+    ctx.globalAlpha=1;}
+  // moving averages
+  for(const m of mas){ctx.strokeStyle=css(m.v);ctx.lineWidth=1.2;ctx.beginPath();let on=false;
+    for(let i=i0;i<=i1;i++){const v=m.a[i];if(v==null){on=false;continue;}const x=xOf(i),y=yOf(v);on?ctx.lineTo(x,y):ctx.moveTo(x,y);on=true;}ctx.stroke();}
+  // candles: colour = quadrant that day; hollow when the session closed up, filled when down
+  const cw=Math.max(1,Math.min(14,bw*.7));
+  for(let i=i0;i<=i1;i++){if(s.c[i]==null)continue;
+    const up=s.c[i]>=s.o[i],cc=st.q?(r.q[i]?col(r.q[i]):muted):(up?css('--lead'):css('--lag'));
+    const x=Math.round(xOf(i))+.5,yo=yOf(s.o[i]),yc=yOf(s.c[i]),yh=yOf(s.h[i]),yl=yOf(s.l[i]);
+    ctx.strokeStyle=cc;ctx.fillStyle=cc;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,yh);ctx.lineTo(x,Math.min(yo,yc));ctx.moveTo(x,Math.max(yo,yc));ctx.lineTo(x,yl);ctx.stroke();
+    const bh=Math.max(1,Math.abs(yc-yo));
+    if(cw<3){ctx.fillRect(x-cw/2,Math.min(yo,yc),cw,bh);}
+    else if(up&&st.q){ctx.strokeRect(Math.round(x-cw/2)+.5,Math.round(Math.min(yo,yc))+.5,Math.round(cw)-1,Math.max(1,Math.round(bh)-1));}
+    else ctx.fillRect(Math.round(x-cw/2),Math.min(yo,yc),Math.round(cw),bh);}
+  // regime ribbon
+  for(let i=i0;i<=i1;i++){if(!r.q[i])continue;ctx.fillStyle=col(r.q[i]);ctx.fillRect(xOf(i)-bw/2,ribY,bw+.5,rib);}
+  // lower panel: RS-Momentum - 100 as bars, RS-Ratio - 100 as a line, each on its own scale
+  let mx=0,my=0;for(let i=i0;i<=i1;i++){if(r.X[i]!=null)mx=Math.max(mx,Math.abs(r.X[i]-100));if(r.Y[i]!=null)my=Math.max(my,Math.abs(r.Y[i]-100));}
+  const mid=lowY+low/2,hh=low/2-4;
+  ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(padL,Math.round(mid)+.5);ctx.lineTo(padL+plotW,Math.round(mid)+.5);ctx.stroke();
+  if(my>0)for(let i=i0;i<=i1;i++){if(r.Y[i]==null)continue;const h=(r.Y[i]-100)/my*hh;ctx.globalAlpha=.75;ctx.fillStyle=r.q[i]?col(r.q[i]):muted;
+    ctx.fillRect(xOf(i)-Math.max(1,bw*.35),h>0?mid-h:mid,Math.max(1,bw*.7),Math.abs(h));}
+  ctx.globalAlpha=1;
+  if(mx>0){ctx.strokeStyle=text;ctx.lineWidth=1.3;ctx.beginPath();let on=false;
+    for(let i=i0;i<=i1;i++){if(r.X[i]==null){on=false;continue;}const x=xOf(i),y=mid-(r.X[i]-100)/mx*hh;on?ctx.lineTo(x,y):ctx.moveTo(x,y);on=true;}ctx.stroke();}
+  // hover crosshair
+  if(HOVER!=null&&HOVER>=i0&&HOVER<=i1){ctx.strokeStyle=muted;ctx.setLineDash([3,3]);ctx.beginPath();const x=Math.round(xOf(HOVER))+.5;ctx.moveTo(x,top);ctx.lineTo(x,lowY+low);ctx.stroke();ctx.setLineDash([]);}
+  ctx.restore();
+  ctx.fillStyle=muted;ctx.textBaseline='top';ctx.textAlign='left';
+  ctx.fillText(`RS-Ratio − 100 (line, ±${fmt(mx,1)})  ·  RS-Momentum − 100 (bars, ±${fmt(my,2)})  vs ${b}`,padL+4,lowY);
+  // date axis
+  const ty=lowY+low+5;ctx.textAlign='center';let lastX=-1e9;
+  for(let i=i0;i<=i1;i++){if(i<1)continue;const m0=D[i-1].slice(0,7),m1=D[i].slice(0,7);if(m0===m1)continue;
+    const x=xOf(i);if(x-lastX<70||x<padL+20||x>padL+plotW-20)continue;lastX=x;
+    const d=new Date(D[i]+'T12:00:00Z');ctx.fillText(d.toLocaleDateString('en-US',{month:'short',year:d.getUTCMonth()===0?'numeric':undefined,timeZone:'UTC'}),x,ty);}
+  tip();
+}
+function tip(){
+  const el=$('#tip');if(HOVER==null||!LAY){el.hidden=true;return;}
+  const i=HOVER,s=series(st.id),it=ITEMS[st.id],b=benchOf(it),r=regime(st.id,b,st.frame);
+  if(s.c[i]==null){el.hidden=true;return;}
+  const ch=i>0&&s.c[i-1]?(s.c[i]/s.c[i-1]-1)*100:null,q=r.q[i];
+  el.innerHTML=`<div style="font-weight:600;margin-bottom:3px">${fmtD(D[i])}</div>
+    ${q?`<div class="r"><span>Regime</span><span style="color:var(${Q[q].v});font-weight:600">${Q[q].n}</span></div>`:''}
+    <div class="r"><span>Open</span><span class="num">${fmt(s.o[i])}</span></div><div class="r"><span>High</span><span class="num">${fmt(s.h[i])}</span></div>
+    <div class="r"><span>Low</span><span class="num">${fmt(s.l[i])}</span></div><div class="r"><span>Close</span><span class="num">${fmt(s.c[i])}${ch==null?'':` (${ch>=0?'+':''}${ch.toFixed(2)}%)`}</span></div>
+    ${s.v[i]?`<div class="r"><span>${it.kind==='layer'?'$ volume':'Volume'}</span><span class="num">${fmtV(s.v[i])}</span></div>`:''}
+    <div class="r"><span>RS-Ratio</span><span class="num">${fmt(r.X[i])}</span></div><div class="r"><span>RS-Momentum</span><span class="num">${fmt(r.Y[i])}</span></div>`;
+  el.hidden=false;
+  const x=LAY.xOf(i),w=el.offsetWidth;el.style.left=(x+16+w>LAY.W?x-16-w:x+16)+'px';el.style.top='14px';
+}
+function idxAt(px){if(!LAY)return null;const i=Math.round(V.a+(px-LAY.padL)/LAY.bw-.5);return i>=0&&i<N?i:null;}
+function zoom(f,cx){const span=V.b-V.a,ns=Math.max(20,Math.min(N+40,span*f)),c=cx==null?V.b:V.a+(cx-LAY.padL)/LAY.bw,t=(c-V.a)/span;
+  V.a=c-t*ns;V.b=V.a+ns;clampV();draw();}
+function clampV(){const span=V.b-V.a;if(V.b>N+span*.3){V.b=N+span*.3;V.a=V.b-span;}if(V.a<-span*.3){V.a=-span*.3;V.b=V.a+span;}}
+cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();
+  if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){const d=e.deltaX/LAY.bw;V.a+=d;V.b+=d;clampV();draw();}else zoom(Math.exp(e.deltaY*.002),e.clientX-r.left);},{passive:false});
+cv.addEventListener('pointerdown',e=>{DRAG={x:e.clientX,a:V.a,b:V.b};cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();
+  if(DRAG){const d=(DRAG.x-e.clientX)/LAY.bw;V.a=DRAG.a+d;V.b=DRAG.b+d;clampV();}
+  HOVER=idxAt(e.clientX-r.left);draw();});
+cv.addEventListener('pointerup',()=>{DRAG=null;});
+cv.addEventListener('pointerleave',()=>{if(!DRAG){HOVER=null;draw();}});
+cv.addEventListener('dblclick',()=>setRange(252));
+addEventListener('resize',()=>{if(st.id)draw();});
+
+function chartInfo(){
+  const it=ITEMS[st.id],b=benchOf(it),r=regime(st.id,b,st.frame),t=tenure(r.wk.q),unit=st.frame==='W'?'week':'session';
+  const s=series(st.id);let last=N-1;while(last>0&&s.c[last]==null)last--;
+  $('#title').textContent=it.kind==='layer'?it.label:`${it.label}${it.name?' · '+it.name:''}`;
+  $('#desc').textContent=it.kind==='layer'?`${it.sub} · equal-weight basket, rebalanced daily`:it.kind==='stock'?`${it.tier} / ${it.sub}`:it.sub;
+  $('#ccur').textContent=it.label;
+  $('#cbadge').innerHTML=t.q?`<span class="badge" style="border-color:var(${Q[t.q].v})"><span class="dot" style="background:var(${Q[t.q].v})"></span>${Q[t.q].n} for ${t.n} ${unit}${t.n>1?'s':''} against ${b}</span>
+    <span style="color:var(--muted);margin-left:8px">${t.prev?`turned from ${Q[t.prev].n} ${st.frame==='W'?'in the week of '+fmtD(D[r.wk.idx[t.start]]):'on '+fmtD(D[t.start])}`:''}</span>`:`<span class="badge">No regime against ${b}</span>`;
+  $('#legend').innerHTML=CYCLE.map(k=>`<span><span class="dot" style="background:var(${Q[k].v})"></span>${Q[k].n}</span>`).join('')+
+    (st.ma?MAS.map(m=>`<span><i style="background:var(${m.v})"></i>${m.l}</span>`).join(''):'')+
+    `<span style="color:var(--faint)">Hollow candle = closed up, filled = closed down</span>`;
+  const pct=n=>{const i=last-n;return i>=0&&s.c[i]&&s.c[last]?((s.c[last]/s.c[i]-1)*100):null;},
+        rel=n=>{const i=last-n,bx=PX[b];return i>=0&&s.c[i]&&bx&&bx[i]?(((s.c[last]/bx[last])/(s.c[i]/bx[i])-1)*100):null;};
+  const sg=v=>v==null?'–':(v>=0?'+':'')+v.toFixed(1)+'%';
+  $('#facts').innerHTML=[['Last close',`${fmt(s.c[last])} <span style="color:var(--muted)">${fmtD(D[last])}</span>`],
+    ['RS-Ratio · RS-Momentum',`${fmt(r.X[last])} · ${fmt(r.Y[last])}`],
+    ['1 month: price · vs '+b,`${sg(pct(21))} · ${sg(rel(21))}`],['3 months: price · vs '+b,`${sg(pct(63))} · ${sg(rel(63))}`],
+    ['1 year: price · vs '+b,`${sg(pct(252))} · ${sg(rel(252))}`]].map(([k,v])=>`<div class="fact"><div class="k">${k}</div><div class="v num">${v}</div></div>`).join('');
+  // past regimes, newest first
+  const runs=[];const qs=r.wk.q,ix=r.wk.idx;let j=qs.length-1;
+  while(j>=0&&runs.length<12){if(qs[j]==null){j--;continue;}let k=j;while(k>0&&qs[k-1]===qs[j])k--;
+    const a=ix[k-1]!=null?ix[k-1]+1:ix[k],z=ix[j],ret=s.c[a]&&s.c[z]&&PX[b][a]&&PX[b][z]?(((s.c[z]/PX[b][z])/(s.c[a]/PX[b][a]))-1)*100:null;
+    runs.push({q:qs[j],n:j-k+1,a,z,ret});j=k-1;}
+  $('#hist').innerHTML=`<h3>Regime history</h3><table><tr><th>Regime</th><th>From</th><th>To</th><th>Length</th><th>vs ${b} over it</th></tr>`+
+    runs.map((u,n)=>`<tr><td><span class="dot" style="background:var(${Q[u.q].v})"></span> ${Q[u.q].n}</td><td class="num">${fmtD(D[u.a])}</td><td class="num">${n===0?'now':fmtD(D[u.z])}</td><td class="num">${u.n} ${unit}${u.n>1?'s':''}</td><td class="num">${sg(u.ret)}</td></tr>`).join('')+'</table>';
+  $('#cnote').textContent=`Each candle is coloured by the quadrant the ${st.frame==='W'?'weekly':'daily'} RRG gave on that day's close: on the weekly frame a day inside a week is that week's provisional bar, exactly what the rotation page showed that day, so the colours use nothing after the date. The ribbon under the candles repeats the regime; the lower panel shows the two numbers that set it. Scroll to zoom, drag to pan, double-click to reset.`;
+}
+
+// ------------------------------------------------------------------ routing + controls
+function show(){
+  const h=decodeURIComponent(location.hash.slice(1));
+  st.id=h.startsWith('c/')&&ITEMS[h.slice(2)]?h.slice(2):null;
+  $('#board').hidden=!!st.id;$('#chartv').hidden=!st.id;$('#csep').hidden=$('#ccur').hidden=!st.id;
+  if(st.id){const it=ITEMS[st.id];st.set=it.kind==='layer'?'layers':it.kind==='stock'?'stocks':'etfs';}
+  board();   // also the order Prev/Next walk, under the current frame and benchmark
+  for(const b of document.querySelectorAll('#set button'))b.setAttribute('aria-pressed',b.dataset.v===st.set);
+  for(const b of document.querySelectorAll('#frame button'))b.setAttribute('aria-pressed',b.dataset.v===st.frame);
+  benchOptions();
+  if(st.id){
+    chartInfo();
+    if(V.id!==st.id){V.id=st.id;setRange(252);}else draw();
+    for(const b of document.querySelectorAll('#range button'))b.setAttribute('aria-pressed',false);
+  }else{
+    $('#title').textContent='Regime board';
+    $('#desc').textContent='Where every AI layer, AI stock and ETF sits on the rotation graph now, and how it got there';
+  }
+  save();
+}
+function benchOptions(){
+  const opts=[['auto','Auto (QQQ, SPY for ETFs)'],['peer','Industry peer'],...[...new Set(['QQQ','SPY',...M.benchmarks])].filter(b=>PX[b]).map(b=>[b,b])];
+  $('#bench').innerHTML=opts.map(([v,l])=>`<option value="${v}"${v===st.bench?' selected':''}>${l}</option>`).join('');
+}
+$('#set').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.set=b.dataset.v;location.hash='';show();});
+$('#frame').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.frame=b.dataset.v;show();});
+$('#bench').addEventListener('change',e=>{st.bench=e.target.value;show();});
+$('#sort').addEventListener('change',e=>{st.sort=e.target.value;show();});
+$('#cols').addEventListener('click',e=>{const c=e.target.closest('.card');if(c)location.hash='c/'+encodeURIComponent(c.dataset.id);});
+$('#toboard').addEventListener('click',()=>{location.hash='';});
+$('#range').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setRange(+b.dataset.v);
+  for(const x of document.querySelectorAll('#range button'))x.setAttribute('aria-pressed',x===b);});
+$('#zin').addEventListener('click',()=>zoom(.7));$('#zout').addEventListener('click',()=>zoom(1/.7));$('#reset').addEventListener('click',()=>setRange(252));
+const step=d=>{if(!ORDER.length)return;const i=ORDER.indexOf(st.id),n=ORDER[(i+d+ORDER.length)%ORDER.length];location.hash='c/'+encodeURIComponent(n);};
+$('#prev').addEventListener('click',()=>step(-1));$('#next').addEventListener('click',()=>step(1));
+for(const [id,k] of [['#oq','q'],['#oma','ma'],['#ovol','vol'],['#olog','log']]){const el=$(id);el.checked=st[k];el.addEventListener('change',()=>{st[k]=el.checked;save();chartInfo();draw();});}
+addEventListener('keydown',e=>{if(!st.id||e.target.closest('input,select'))return;
+  if(e.key==='ArrowLeft')step(-1);else if(e.key==='ArrowRight')step(1);else if(e.key==='+'||e.key==='=')zoom(.7);else if(e.key==='-')zoom(1/.7);else if(e.key==='0')setRange(252);else if(e.key==='Escape')location.hash='';});
+addEventListener('hashchange',show);
+// search
+const qi=$('#q'),qr=$('#qres');let QSEL=0;
+function search(){const s=qi.value.trim().toLowerCase();if(!s){qr.hidden=true;return;}
+  const hits=Object.values(ITEMS).map(it=>{const a=it.label.toLowerCase(),n=(it.name||'').toLowerCase();
+    const sc=a===s?0:a.startsWith(s)?1:n.startsWith(s)?2:a.includes(s)||n.includes(s)?3:9;return {it,sc};}).filter(h=>h.sc<9).sort((a,b)=>a.sc-b.sc||a.it.label.localeCompare(b.it.label)).slice(0,12);
+  QSEL=0;qr.innerHTML=hits.map((h,i)=>`<button type="button" data-id="${esc(h.it.id)}" class="${i?'':'on'}"><span>${esc(h.it.label)}</span><small>${esc(h.it.kind==='layer'?'Layer':h.it.name||h.it.sub)}</small></button>`).join('')||'<div class="empty">No match</div>';qr.hidden=false;}
+qi.addEventListener('input',search);
+qi.addEventListener('keydown',e=>{const bs=[...qr.querySelectorAll('button')];if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();QSEL=(QSEL+(e.key==='ArrowDown'?1:-1)+bs.length)%Math.max(1,bs.length);bs.forEach((b,i)=>b.classList.toggle('on',i===QSEL));}
+  else if(e.key==='Enter'&&bs[QSEL]){location.hash='c/'+encodeURIComponent(bs[QSEL].dataset.id);qi.value='';qr.hidden=true;}else if(e.key==='Escape'){qr.hidden=true;}});
+qr.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;location.hash='c/'+encodeURIComponent(b.dataset.id);qi.value='';qr.hidden=true;});
+document.addEventListener('click',e=>{if(!e.target.closest('.find'))qr.hidden=true;});
+
+// ------------------------------------------------------------------ load
+Promise.all([fetch('history.json').then(r=>r.json()),fetch('ohlc.json').then(r=>r.json())]).then(([h,o])=>{
+  D=h.dates;N=D.length;PX=h.px;OH={};
+  // align the candle file to the price dates by date, in case one was rebuilt without the other
+  const pos=new Map(o.dates.map((d,i)=>[d,i]));
+  for(const [t,cols] of Object.entries(o.ohlc)){OH[t]=cols.map(c=>D.map(d=>{const i=pos.get(d);return i==null?0:c[i];}));}
+  buildItems();
+  $('#loading').hidden=true;
+  show();
+}).catch(e=>{$('#loading').textContent='Could not load prices: '+e;});
+</script>

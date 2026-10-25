@@ -1,0 +1,117 @@
+# Pre-registered: the leads on small and mid caps (2026-10-25)
+
+Committed with `research/smallcap.py` before running. The signals passed the look-ahead
+check on these universes; no returns were computed. `python research/smallcap.py` runs once.
+
+## Why
+
+These are about 1,000 stocks that nothing in this project has ever been scored on, in any
+period. That makes them the cleanest check left of tonight's leads, which were all chosen on
+other data.
+
+## Universes
+
+| universe | names | benchmark |
+|---|---|---|
+| S&P 400 stocks | the ~400 current members | MDY |
+| S&P 600 stocks | the ~600 current members | IJR |
+| S&P 400 sub-industry baskets | GICS sub-industries with 3+ members, equal weight | MDY |
+| S&P 600 sub-industry baskets | the same | IJR |
+
+Stocks added inside Wikipedia's change log (S&P 400 from 2012, S&P 600 from 2019) count only
+from their add date. Members added earlier have no date and count from their first price.
+
+## Tests (signals built exactly as in search.py / search_regime.py)
+
+| test | universes | where it was chosen |
+|---|---|---|
+| low skew | all four | skewness, passed on country/style ETFs (CONFIRM_SKEW.md) |
+| low skew + 1w losers | all four | the final exam signal (FINAL.md) |
+| bear rebound: skew + 1w reversal + illiquidity, only weeks the benchmark is below its 40-week average | the two stock universes | round 2, AI stocks (CONFIRM_STOCKS.md) |
+| skew + 1w losers + falling RS-Momentum | the two basket universes | round 9's best (SEARCH_BASKETS.md) |
+
+## Rules
+
+- **Research period (before 2023): the primary test.** Scorecard verdict with the bar for 4
+  tests, z(1 − 0.05/8)/1.96 ≈ 1.28: the same IC sign in every cell, the right direction in at
+  least 60% of years, and a positive direction.
+- **2023+: reported in the same run, as a confirmation.** Single-test bar of 1.00. Bear-week
+  cells will likely fall below the scorecard's minimum weeks and drop out; that is accepted.
+- **Confirmed** means a pass on the research period and a pass, or at least the same sign in
+  every remaining cell, on 2023+.
+- **One shot.** No tweaks.
+
+## Known limits
+
+- **Survivorship is heavy here.** These are today's members, most without join dates, and
+  small caps that failed or were dropped are missing. That flatters anything favouring
+  beaten-down or illiquid names, the bear rebound in particular, so a pass needs the 2023+
+  check to mean much.
+- **Wikipedia's GICS labels are today's,** applied to the whole history.
+
+## Result (run once, 2026-10-25)
+
+| test | research score (bar 1.27) | 2023+ score (bar 1.00) | verdict |
+|---|---|---|---|
+| low skew | +0.29 | +0.78, positive in all 8 cells | fail |
+| low skew + 1w losers | +1.20, mixed signs | +0.77, positive in all 8 cells | fail (near miss) |
+| **bear rebound: skew + 1w reversal + illiquidity** | **+3.32** (cells +3.0 to +3.7) | **+1.37** (3 cells; S&P 400 13w had too few weeks) | **PASS on both** |
+| skew + 1w losers + falling RS-Momentum | +0.77 | +0.41 | fail |
+
+**The bear rebound on 2023+:**
+
+| universe | H | IC | ratio | net spread per period | years right |
+|---|---|---|---|---|---|
+| S&P 400 stocks | 4w | +0.064 | +1.80 | +1.28% | 100% |
+| S&P 600 stocks | 4w | +0.033 | +0.61 | +0.85% | 100% |
+| S&P 600 stocks | 13w | +0.063 | +1.68 | +3.58% | 100% |
+
+**Caveat before believing it.** Survivorship flatters this signal most of all: small caps that
+were removed from the index after collapsing are missing, and they are exactly the
+illiquid losers that did not rebound. That applies to 2023+ too. See the survivorship check
+below.
+
+## Survivorship check (pre-registered here, before running)
+
+`python research/smallcap_surv.py` runs once.
+
+- **Universe rebuilt.** The S&P 400 and 600 stock universes are rebuilt with point-in-time
+  membership from Wikipedia's change logs (S&P 400 from 2012, S&P 600 from 2019). Every
+  removed stock is added back up to its removal date, using whatever Yahoo still has.
+- **Test.** The bear rebound is scored on 2023+ only, the period the logs fully cover.
+- **Rule.** The same single-test bar (1.00), the same IC sign in every cell, and the right
+  direction in at least 60% of years.
+- **Reading.**
+  - A pass means the 2023+ result survives putting the removed stocks back.
+  - A fail means survivorship produced the earlier pass.
+  - The run reports how many removed stocks have no Yahoo history (mostly acquisitions,
+    which were usually taken over at a premium, not collapses).
+
+## Survivorship check result (run once): FAIL, so the pass above was mostly survivorship
+
+- **Data recovered.** Of 748 removed tickers missing from the first download, 318 still have
+  Yahoo history.
+- **Members since 2023.** 511 S&P 400 and 801 S&P 600 stocks were members at some point
+  since 2023, of which 112 and 200 have since been removed.
+
+| universe (point-in-time) | H | IC | ratio | net per period |
+|---|---|---|---|---|
+| S&P 400 stocks | 4w | +0.034 | +0.76 | +0.32% |
+| S&P 600 stocks | 4w | −0.000 | −0.01 | −0.42% |
+| S&P 600 stocks | 13w | +0.011 | +0.27 | +0.51% |
+
+Score +0.34 against a bar of 1.00, with mixed signs. On today's-members-only data the same
+signal scored +1.37.
+
+**The correction is itself incomplete, and it errs in the signal's favour:**
+
+- 430 removed stocks have no Yahoo history (acquisitions and failures).
+- A stock removed partway through a forecast window drops out of that window instead of
+  counting its loss, because prices are masked from its removal date.
+
+So the true effect is likely smaller still.
+
+**Reading.** The bear-market rebound in small and mid caps was produced mostly by keeping
+only the survivors. The same caveat applies to the S&P 500 pass and to the AI stocks:
+today's AI basket list is itself a survivor list chosen in 2026. The AI bear-rebound lead
+should now be treated as unproven, and probably survivorship.
