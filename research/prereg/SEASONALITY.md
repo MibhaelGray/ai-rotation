@@ -30,3 +30,14 @@ Nyberg). Nothing tested so far used the calendar.
   10-year fetch starts in 2016 and the signal needs 5 prior years. That cell may drop out,
   and if it stays it is thin.
 - **ETFs start in 2004** for the same reason.
+
+## Result (2026-10-25): 0 of 2 pass
+
+| signal | score | bar |
+|---|---|---|
+| 4-week seasonality | −0.26 | 1.64 |
+| 13-week seasonality | −0.11 | 1.64 |
+
+Neither has a consistent sign, and no cell comes near its noise threshold. Calendar
+seasonality does not show up in these funds' relative returns. The AI stock cells stayed in
+but cover only about a year.
