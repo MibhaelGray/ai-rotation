@@ -53,3 +53,26 @@ Horizons are 4 and 13 weeks, which gives 4 cells.
   have fewer names, and weeks under the minimum are skipped.
 - **Correlated styles.** Style funds move together closely (IWB is almost SPY), so the
   style cross-section is narrow and noisy.
+
+## Result (run once, 2026-10-25): fail
+
+| cell | IC | IC t | placebo t95 | ratio | net spread per H | years right |
+|---|---|---|---|---|---|---|
+| Country ETFs vs EFA, 4w | +0.032 | +2.52 | 2.18 | +1.16 | −0.04% | 62% |
+| Country ETFs vs EFA, 13w | +0.030 | +1.38 | 2.53 | +0.55 | −0.02% | 52% |
+| US style ETFs vs SPY, 4w | +0.030 | +1.67 | 3.17 | +0.53 | −0.19% | 59% |
+| US style ETFs vs SPY, 13w | +0.030 | +1.05 | 2.56 | +0.41 | −0.16% | 50% |
+
+**Verdict.** Score +0.66 against a bar of 1.00, and right in 56% of years against 60%
+required. It fails on both counts; the IC was positive in all four cells.
+
+**Reading.**
+- **The direction carries over.** The IC is positive in every cell, at about the same size
+  as on the original universes (+0.03).
+- **The effect is too weak to pass.** Only one cell (countries, 4 weeks) beats its own noise
+  threshold.
+- **The top-minus-bottom spread is gone after 15bp trading costs** in every cell.
+
+So the pattern is probably real but small: too small to stand out from noise on independent
+data, and too small to trade. Per the rules this signal is finished. It does not go to the
+holdout, and it will not be tweaked and re-run.
