@@ -70,3 +70,19 @@ from their add date. Members added earlier have no date and count from their fir
 were removed from the index after collapsing are missing, and they are exactly the
 illiquid losers that did not rebound. That applies to 2023+ too. See the survivorship check
 below.
+
+## Survivorship check (pre-registered here, before running)
+
+`python research/smallcap_surv.py` runs once.
+
+- **Universe rebuilt.** The S&P 400 and 600 stock universes are rebuilt with point-in-time
+  membership from Wikipedia's change logs (S&P 400 from 2012, S&P 600 from 2019). Every
+  removed stock is added back up to its removal date, using whatever Yahoo still has.
+- **Test.** The bear rebound is scored on 2023+ only, the period the logs fully cover.
+- **Rule.** The same single-test bar (1.00), the same IC sign in every cell, and the right
+  direction in at least 60% of years.
+- **Reading.**
+  - A pass means the 2023+ result survives putting the removed stocks back.
+  - A fail means survivorship produced the earlier pass.
+  - The run reports how many removed stocks have no Yahoo history (mostly acquisitions,
+    which were usually taken over at a premium, not collapses).
