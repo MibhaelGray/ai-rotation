@@ -67,3 +67,22 @@ report the mean weekly rank IC and the share of positive weeks over the 2023+ be
 and 13 weeks, on S&P 500 stocks and on AI stocks. The pass/fail verdict stays the research
 result above, with its caveat. This only says whether the recent bear episodes point the
 same way.
+
+**Descriptive 2023+ result (combined candidate, bear weeks only):**
+
+| universe | H | bear weeks | mean IC | weeks positive |
+|---|---|---|---|---|
+| S&P 500 stocks | 4 | 16 | −0.025 | 31% |
+| S&P 500 stocks | 13 | 16 | +0.001 | 44% |
+| AI stocks | 4 | 17 | +0.039 | 65% |
+| AI stocks | 13 | 17 | **+0.118** | **76%** |
+
+**Reading.**
+- **On S&P 500 stocks the effect vanishes in the recent bear episodes,** consistent with
+  survivorship having inflated the 1999-2022 pass.
+- **On AI stocks it holds,** in the same direction as the 2011-2022 validation (13-week
+  ratio +2.84). In AI stocks during QQQ drawdowns, illiquid, low-skew names that fell last
+  week tend to rebound over the next quarter.
+
+That rests on roughly five short episodes since 2023 and about three in 2018-2022. It is an
+AI-specific lead worth watching, not a proven signal.
