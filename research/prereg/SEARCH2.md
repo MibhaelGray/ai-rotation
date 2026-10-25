@@ -39,3 +39,23 @@ bear weeks are below it. A candidate is scored only on that regime's weeks.
   their Newey-West t treats the gaps between regime spells as adjacent.
 - **The regime is defined by each universe's own benchmark,** so for AI stocks it is QQQ's
   trend.
+
+## Result (2026-10-25): 0 of 20 pass validation (bar 1.65)
+
+- **Discovery.** 9,050 candidates in 14 seconds. The shortlist splits into bull-market
+  candidates (negative skewness plus squeeze, trend or low-ATR-stretch legs) and bear-market
+  candidates (illiquidity, i.e. Amihud, plus low volatility, short-term reversal or weak
+  closes).
+- **Validation (2011-2022).** Scores run from +0.13 to +0.78. The two kinds split by universe:
+  - **Bull candidates** hold on ETFs and sectors, with ratios of 1.0-1.6 at 4 weeks, but
+    turn negative on AI stocks at 13 weeks.
+  - **Bear candidates built on illiquidity** are the strongest single cells of the night on
+    AI stocks at 13 weeks: +2.84 for skew + 1-week reversal + Amihud, +2.49 and +2.05 for the
+    others. They are near zero on ETFs and sectors.
+- **Reading.**
+  - **Negative skewness** works on ETFs in rising markets.
+  - **Illiquid AI stocks rebound after bear-market selloffs,** which is the classic
+    liquidity premium. But the 2011-2022 bear weeks for QQQ are a few spells, mostly
+    2018-19 and 2022, so that is a handful of episodes, not hundreds.
+  - Neither effect holds across universes, which the pass rule requires, and nothing reaches
+    the holdout.
