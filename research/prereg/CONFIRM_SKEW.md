@@ -44,3 +44,29 @@ It has never been scored alone on independent universes.
 Score +1.22 against a bar of 1.14. Every cell is positive, the direction is right in 67% of
 years, and the net spread after costs is positive in every cell. Per the rules above, it now
 takes the one-shot 2023+ holdout on the original universes.
+
+## Holdout (2023-01-01 onward, run once, 2026-10-25): fail
+
+| cell | IC | IC t | placebo t95 | ratio | net spread per H | years right |
+|---|---|---|---|---|---|---|
+| ETFs vs SPY, 4w | +0.047 | +1.95 | 2.61 | +0.75 | +0.26% | 75% |
+| ETFs vs SPY, 13w | +0.095 | +2.33 | 2.76 | +0.84 | +1.49% | 75% |
+| Sectors vs SPY, 4w | +0.015 | +0.43 | 2.89 | +0.15 | +0.03% | 75% |
+| Sectors vs SPY, 13w | +0.055 | +0.98 | 2.63 | +0.37 | +0.14% | 75% |
+| AI stocks vs QQQ, 4w | +0.007 | +0.63 | 2.45 | +0.26 | −0.23% | 25% |
+| AI stocks vs QQQ, 13w | +0.011 | +0.44 | 3.15 | +0.14 | +0.32% | 50% |
+
+Score +0.42 against the single-test bar of 1.00, so it fails.
+
+**What it means.** On data no test had seen, the IC was positive in all six cells, AI stocks
+included, and the ETF cells were close to their full-period strength (IC +0.05 / +0.10). The
+holdout is under four years, so an effect this size cannot clear a placebo-calibrated bar
+there. Per the rules the signal is finished: no tweaks and no second exam.
+
+**Where it leaves the evidence.** Negative skewness is the one effect tonight with the right
+sign in every period and every universe tested: 1999-2010, 2011-2022, country ETFs, style
+ETFs and 2023 onward. It is consistent and modest, and it never cleared the holdout bar.
+Treat it as a tilt to keep watching, not a proven signal.
+
+The holdout has now been seen once. Any later finalist's holdout result is slightly less
+blind, and should say so.
