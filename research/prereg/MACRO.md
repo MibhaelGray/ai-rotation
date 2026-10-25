@@ -42,3 +42,20 @@ outperforming.
   curve are not independent tests.
 - **Oil** starts in 2000, which costs the ETF universes their first year.
 - **Betas are noisy,** and 104 weeks can straddle a regime change in how a sector responds.
+
+## Result (2026-10-25): 0 of 6 pass
+
+| signal | score | sign across the 6 cells |
+|---|---|---|
+| rates | −0.33 | mixed: negative on ETFs and sectors, positive on AI stocks |
+| curve | −0.11 | mixed, near zero |
+| dollar | +0.26 | positive in all six, but weak |
+| oil | −0.61 | **negative in all six** |
+| vix | −0.62 | **negative in all six** |
+| composite | −0.44 | negative in all six |
+
+**Reading.** The persistence hypothesis fails. For oil and VIX the effect is the reverse and
+consistent: funds that gained from the factor's recent trend give it back over the next 1-3
+months. That fits the reversal and overextension effects seen elsewhere, but at about −0.6
+it is far below the bar. Writing a flipped version now would be a hypothesis chosen after
+seeing the result, so it is noted and not tested.
