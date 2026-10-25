@@ -36,3 +36,18 @@ The same as search.py, with these differences:
 
 - **Survivorship.** The baskets are built from today's S&P 500 members, each counted from
   its join date (see BREADTH.md).
+
+## Result (2026-10-25): 0 of 20 pass validation (bar about 1.57)
+
+- **Discovery.** 19,737 candidates in 35 seconds. The shortlist is again built on negative
+  skewness and the short-term (1-week or 4-week) reversal, with distance from the RRG centre,
+  falling RS-Momentum and low breadth participation as third legs.
+- **Validation (2011-2022).** Scores run from +0.12 to +0.87.
+  - The best is skewness + 1-week reversal + falling RS-Momentum, at +0.87 and positive in
+    all six cells: sub-industries +1.14 / +1.13, sectors +0.96 / +0.67, AI layers +1.09 /
+    +0.20.
+  - Second is skewness + falling volatility ratio + 1-week reversal, at +0.80 and also
+    positive in all six.
+- **Reading.** On factor-like baskets, including the AI layers, the effect found tonight
+  holds its sign out of sample: steady, low-skew baskets that lagged last week outperform.
+  It is consistent and modest, and no version clears the bar.
