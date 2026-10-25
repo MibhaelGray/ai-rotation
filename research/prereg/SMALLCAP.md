@@ -86,3 +86,32 @@ below.
   - A fail means survivorship produced the earlier pass.
   - The run reports how many removed stocks have no Yahoo history (mostly acquisitions,
     which were usually taken over at a premium, not collapses).
+
+## Survivorship check result (run once): FAIL, so the pass above was mostly survivorship
+
+- **Data recovered.** Of 748 removed tickers missing from the first download, 318 still have
+  Yahoo history.
+- **Members since 2023.** 511 S&P 400 and 801 S&P 600 stocks were members at some point
+  since 2023, of which 112 and 200 have since been removed.
+
+| universe (point-in-time) | H | IC | ratio | net per period |
+|---|---|---|---|---|
+| S&P 400 stocks | 4w | +0.034 | +0.76 | +0.32% |
+| S&P 600 stocks | 4w | −0.000 | −0.01 | −0.42% |
+| S&P 600 stocks | 13w | +0.011 | +0.27 | +0.51% |
+
+Score +0.34 against a bar of 1.00, with mixed signs. On today's-members-only data the same
+signal scored +1.37.
+
+**The correction is itself incomplete, and it errs in the signal's favour:**
+
+- 430 removed stocks have no Yahoo history (acquisitions and failures).
+- A stock removed partway through a forecast window drops out of that window instead of
+  counting its loss, because prices are masked from its removal date.
+
+So the true effect is likely smaller still.
+
+**Reading.** The bear-market rebound in small and mid caps was produced mostly by keeping
+only the survivors. The same caveat applies to the S&P 500 pass and to the AI stocks:
+today's AI basket list is itself a survivor list chosen in 2026. The AI bear-rebound lead
+should now be treated as unproven, and probably survivorship.
