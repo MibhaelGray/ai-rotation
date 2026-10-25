@@ -46,9 +46,8 @@ data = json.dumps(full, separators=(",", ":"))
 # first load shrinks by more than half and no third-party request is added. Values at the
 # latest date are unchanged - the smoothing's starting point decays away long before it.
 WINDOW = 320
-history = None
+history = {"dates": full["dates"], "px": full["px"]}   # also the candles page's closes
 if len(full["dates"]) > WINDOW:
-    history = {"dates": full["dates"], "px": full["px"]}
     data = json.dumps(dict(full, dates=full["dates"][-WINDOW:],
                            px={k: v[-WINDOW:] for k, v in full["px"].items()},
                            full_len=len(full["dates"]), win_start=full["dates"][-WINDOW]),
@@ -94,11 +93,33 @@ if shutil.which("node"):
     if chk.returncode:
         sys.exit("page script failed to parse - not publishing:\n" + chk.stderr)
 
+# The regimes page: candles coloured by RRG quadrant. It loads the same closes (history.json)
+# plus the candle file fetch.py writes, so only the small tree of names is embedded.
+meta = {k: full.get(k) for k in ["asof", "groups", "names", "sectors", "industry_etfs", "benchmarks", "peers", "membership"]}
+ctpl = (ROOT / "template_candles.html").read_text()
+candles = (f'<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+           f'<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+           f'<meta name="theme-color" content="#0d0e10">\n'
+           + page[page.index('<link rel="icon"'):].split("\n", 1)[0] + "\n"
+           + ctpl.replace("__META__", json.dumps(meta, separators=(",", ":")).replace("</", "<\\/"))
+           .replace("<script id=", "</head>\n<body>\n<script id=", 1) + "\n</body>\n</html>\n")
+if shutil.which("node"):
+    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False) as f:
+        f.write("\n".join(re.findall(r"<script>(.*?)</script>", candles, re.S)))
+    chk = subprocess.run(["node", "--check", f.name], capture_output=True, text=True)
+    Path(f.name).unlink()
+    if chk.returncode:
+        sys.exit("candles page script failed to parse - not publishing:\n" + chk.stderr)
+
 out = ROOT / "site" / "index.html"
 out.parent.mkdir(exist_ok=True)
 out.write_text(page)
+(ROOT / "site" / "candles.html").write_text(candles)
+ohlc = ROOT / "build" / "data_ohlc.json"
+if ohlc.exists():
+    shutil.copy2(ohlc, ROOT / "site" / "ohlc.json")
 (ROOT / "site" / "favicon.ico").write_bytes(favicon())
-if history:
+if history:   # always set; kept as a guard
     (ROOT / "site" / "history.json").write_text(json.dumps(history, separators=(",", ":")))
 (ROOT / "site" / "version.json").write_text(json.dumps({"built": full["built"], "live": full.get("live")}))
 fonts = ROOT / "site" / "fonts"

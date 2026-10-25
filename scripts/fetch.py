@@ -11,7 +11,7 @@ import yfinance as yf
 
 ROOT = Path(__file__).resolve().parent.parent
 CFG = json.loads((ROOT / "config" / "baskets.json").read_text())
-OUT = ROOT / "build" / "data.json"
+OUT = Path(os.environ.get("FETCH_OUT", ROOT / "build" / "data.json"))   # research/ keeps its own long copy
 PERIOD = os.environ.get("FETCH_PERIOD", "3y")   # the backtest asks for longer
 MAX_MISSING_SHARE = 0.10
 STALE_SESSIONS = 5   # drop a listing whose last print is more than this many US sessions old
@@ -39,22 +39,55 @@ def sigfig(v, n=5):
 
 
 def download(symbols, tries=3):
-    """Batch download closes, retrying missing symbols individually."""
+    """Batch download closes, retrying missing symbols individually.
+
+    The day's open, high and low come back in the same request; they are kept in BARS for
+    the candles page, which only needs them as ratios to the close."""
     frame = pd.DataFrame()
     for attempt in range(tries):
         need = [s for s in symbols if s not in frame or frame[s].dropna().empty]
         if not need:
             break
         try:
-            d = yf.download(need, period=PERIOD, interval="1d", progress=False, auto_adjust=True, threads=True)["Close"]
-            if isinstance(d, pd.Series):
-                d = d.to_frame(need[0])
-            d.index = pd.to_datetime([str(i.date()) for i in d.index])
-            frame = d if frame.empty else frame.combine_first(d)
+            full = yf.download(need, period=PERIOD, interval="1d", progress=False, auto_adjust=True, threads=True)
+            for f in ["Close", "Open", "High", "Low", "Volume"]:
+                d = full[f]
+                if isinstance(d, pd.Series):
+                    d = d.to_frame(need[0])
+                d.index = pd.to_datetime([str(i.date()) for i in d.index])
+                if f == "Close":
+                    frame = d if frame.empty else frame.combine_first(d)
+                else:
+                    BARS[f] = d if f not in BARS else BARS[f].combine_first(d)
         except Exception as e:  # network hiccup / rate limit
             print(f"download attempt {attempt + 1} failed: {e}", file=sys.stderr)
         time.sleep(5 * (attempt + 1))
     return frame
+
+
+BARS = {}
+
+
+def candle_ratios(s, close_local, dates):
+    """Open, high and low of one listing as basis points from its close, on the page's dates,
+    then volume in shares of the listing (0 where it did not trade).
+
+    Ratios are currency-free, so they apply unchanged to the USD close. Sessions without a
+    bar (a foreign holiday carried forward, an intraday-filled close) come out as 0: a flat
+    candle at the close."""
+    out = []
+    for f in ["Open", "High", "Low"]:
+        b = BARS.get(f, pd.DataFrame())
+        r = (b[s] / close_local).reindex(dates) if s in b else pd.Series(float("nan"), index=dates)
+        if f == "High":
+            r = r.clip(lower=1)
+        elif f == "Low":
+            r = r.clip(upper=1)
+        out.append([0 if pd.isna(v) or not math.isfinite(v) else int(round((v - 1) * 1e4)) for v in r])
+    v = BARS.get("Volume", pd.DataFrame())
+    v = v[s].reindex(dates) if s in v else pd.Series(float("nan"), index=dates)
+    out.append([0 if pd.isna(x) else int(x) for x in v])
+    return out
 
 
 EXCHANGE_TZ = {".T": "Asia/Tokyo", ".KS": "Asia/Seoul", ".KQ": "Asia/Seoul", ".TW": "Asia/Taipei",
@@ -204,7 +237,8 @@ def main():
     dtk = set(drv.get("indices", [])) | {t for s in drv.get("styles", []) for k in "ab"
                                           for t in ([s[k]] if isinstance(s[k], str) else s[k])}
     dtk |= {t for b in drv.get("barometers", []) for t in b.get("ratio", [])} | set((weights or {}).get("top", {}))
-    names = sorted(set(CFG["benchmarks"]) | set(CFG.get("sectors", {})) | set(macro)
+    industry = {k: v for k, v in CFG.get("industry_etfs", {}).items() if not k.startswith("_")}
+    names = sorted(set(CFG["benchmarks"]) | set(CFG.get("sectors", {})) | set(industry) | set(macro)
                    | set(tickers(groups)) | {t for v in stacks.values() for t in tickers(v["groups"])}
                    | set(historical) | set(dsym) | dtk)
     sym = {n: macro[n]["symbol"] if n in macro else dsym.get(n) or foreign.get(n, n) for n in names}
@@ -234,11 +268,12 @@ def main():
     # empty ~$10 SPAC shell until the Agility Robotics deal was announced on 2026-06-24.
     starts = {k: pd.Timestamp(v) for k, v in CFG.get("starts", {}).items()}
 
-    px, missing, stale = {}, [], []
+    px, ohlc, missing, stale = {}, {}, [], []
     for n, s in sym.items():
         p = raw[s].dropna() if s in raw else pd.Series(dtype=float)
         if n in starts:
             p = p[p.index >= starts[n]]
+        local = p
         # Under 60 prints usually means a broken or sparse symbol. A fresh listing is the exception
         # (Iambic, IAM, listed 2026-10-15): it joins its baskets from its second session, as any
         # late starter does, and gets a dot of its own once it has the history for one.
@@ -261,6 +296,10 @@ def main():
         q = p.reindex(p.index.union(us)).ffill().reindex(us)
         q[q.index < first] = float("nan")
         px[n] = [None if pd.isna(v) else sigfig(float(v)) for v in q]
+        if n not in macro:
+            # a session the listing did not trade (carried forward onto a US date) is flat
+            traded = local.reindex(us).notna()
+            ohlc[n] = [[v if t else 0 for v, t in zip(col, traded)] for col in candle_ratios(s, local, us)]
 
     for b in CFG["benchmarks"]:
         if b not in px:
@@ -285,6 +324,7 @@ def main():
                                # the page decodes these inline, and shows every other name on hover
                                "adhoc": sorted(k for k in foreign if k in px),
                                "sectors": {k: v for k, v in CFG.get("sectors", {}).items() if k in px},
+                               "industry_etfs": {k: v for k, v in industry.items() if k in px},
                                "macro": {k: v["label"] for k, v in macro.items() if k in px},
                                "benchmarks": [b for b in CFG["benchmarks"] if b in px],
                                "peers": CFG.get("peer_benchmarks", {}),
@@ -299,6 +339,10 @@ def main():
                                          for n, s in sym.items() if s in PROXY and n in px
                                          and any(d in us for d in PROXY[s])}},
                               separators=(",", ":")))
+    # Candle bars for the candles page, a separate file so the rotation page's payload is unchanged.
+    (OUT.parent / f"{OUT.stem}_ohlc.json").write_text(json.dumps(
+        {"dates": [str(x.date()) for x in us], "ohlc": {k: v for k, v in ohlc.items() if k in px}},
+        separators=(",", ":")))
     print(f"wrote {OUT} - {len(px)} series through {us[-1].date()}")
 
 
