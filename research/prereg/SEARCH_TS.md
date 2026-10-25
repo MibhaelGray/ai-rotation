@@ -44,3 +44,15 @@ is the timing question behind "is this factor about to rotate".
 - **The z-score needs two years of history,** so AI stocks enter in late 2018.
 - **Factors move together.** The weekly mean pools factors whose relative returns are
   correlated, and the placebo handles that the same way.
+
+## Result (2026-10-25): 0 of 20 pass validation (bar 1.70)
+
+- **Discovery.** 4,525 candidates in 23 seconds. The shortlist is almost entirely
+  top-warnings: short the factor against its benchmark when, against its own history, it
+  shows lottery-like spikes, right-skewed returns and an extended trend (12-month momentum,
+  40-week trend, RS-Ratio, RSI). Discovery t-stats were 3.6-4.2.
+- **Validation (2011-2022).** Scores run from −0.28 to +0.36. Sectors at 13 weeks are
+  negative for 19 of the 20.
+- **Reading.** Timing a factor against its own history fails out of sample more completely
+  than any cross-sectional test did. The top-warning pattern was a 1999-2010 artefact, or at
+  least it did not survive into 2011-2022. Nothing reaches the holdout.
